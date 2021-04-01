@@ -26,8 +26,11 @@
 		"TheWikipediaLibraryHooks": "includes/TheWikipediaLibraryHooks.php",
 		"TwlEligiblePresentationModel": "includes/TwlEligiblePresentationModel.php"
 	},
+	"AutoloadNamespaces": {
+		"TheWikipediaLibrary\\": "includes/"
+	},
 	"DefaultUserOptions": {
-		"twl-notified": false
+		"twl-notified": null
 	},
 	"Hooks": {
 		"PageSaveComplete": "TheWikipediaLibraryHooks::onPageSaveComplete",

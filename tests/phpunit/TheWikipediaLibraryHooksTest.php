@@ -3,6 +3,7 @@ use CentralAuth\CentralAuthUser;
 use GlobalPreferences\GlobalPreferencesFactory;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Storage\EditResult;
+use TheWikipediaLibrary\PreferenceHelper;
 
 /**
  * @group TheWikipediaLibrary
@@ -84,7 +85,7 @@ class TheWikipediaLibraryHooksTest extends MediaWikiIntegrationTestCase {
 				->getMock();
 		$prefsFactory->method( 'getGlobalPreferencesValues' )
 			->willReturn( [
-				'twl-notified' => 0,
+				'twl-notified' => false,
 			] );
 
 		$this->setService( 'PreferencesFactory', $prefsFactory );
@@ -100,10 +101,9 @@ class TheWikipediaLibraryHooksTest extends MediaWikiIntegrationTestCase {
 			$this->createMock( EditResult::class )
 		);
 
-		$prefs = $prefsFactory->getGlobalPreferencesValues( $this->user1, true );
+		$twlNotified = PreferenceHelper::getGlobalPreference( $this->user1, 'twl-notified' );
 
-		// TODO: uncomment this assertion when working on T256297
-		// $this->assertSame( $prefs['twl-notified'], 1 );
+		$this->assertSame( $twlNotified, true );
 	}
 
 	/**
@@ -117,7 +117,7 @@ class TheWikipediaLibraryHooksTest extends MediaWikiIntegrationTestCase {
 				->getMock();
 		$prefsFactory->method( 'getGlobalPreferencesValues' )
 			->willReturn( [
-				'twl-notified' => 0,
+				'twl-notified' => false,
 			] );
 
 		$this->setService( 'PreferencesFactory', $prefsFactory );
@@ -133,10 +133,9 @@ class TheWikipediaLibraryHooksTest extends MediaWikiIntegrationTestCase {
 			$this->createMock( EditResult::class )
 		);
 
-		$prefs = $prefsFactory->getGlobalPreferencesValues( $this->user2, true );
+		$twlNotified = PreferenceHelper::getGlobalPreference( $this->user2, 'twl-notified' );
 
-		// TODO: uncomment this assertion when working on T256297
-		// $this->assertSame( $prefs['twl-notified'], 0 );
+		$this->assertSame( $twlNotified, false );
 	}
 
 }
