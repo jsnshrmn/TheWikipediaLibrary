@@ -85,7 +85,7 @@ class TheWikipediaLibraryHooksTest extends MediaWikiIntegrationTestCase {
 				->getMock();
 		$prefsFactory->method( 'getGlobalPreferencesValues' )
 			->willReturn( [
-				'twl-notified' => false,
+				'twl-notified' => 'yes',
 			] );
 
 		$this->setService( 'PreferencesFactory', $prefsFactory );
@@ -103,7 +103,7 @@ class TheWikipediaLibraryHooksTest extends MediaWikiIntegrationTestCase {
 
 		$twlNotified = PreferenceHelper::getGlobalPreference( $this->user1, 'twl-notified' );
 
-		$this->assertSame( $twlNotified, true );
+		$this->assertSame( 'yes', $twlNotified );
 	}
 
 	/**
@@ -117,7 +117,7 @@ class TheWikipediaLibraryHooksTest extends MediaWikiIntegrationTestCase {
 				->getMock();
 		$prefsFactory->method( 'getGlobalPreferencesValues' )
 			->willReturn( [
-				'twl-notified' => false,
+				'twl-notified' => 'no',
 			] );
 
 		$this->setService( 'PreferencesFactory', $prefsFactory );
@@ -135,7 +135,7 @@ class TheWikipediaLibraryHooksTest extends MediaWikiIntegrationTestCase {
 
 		$twlNotified = PreferenceHelper::getGlobalPreference( $this->user2, 'twl-notified' );
 
-		$this->assertSame( $twlNotified, false );
+		$this->assertSame( 'no', $twlNotified );
 	}
 
 }

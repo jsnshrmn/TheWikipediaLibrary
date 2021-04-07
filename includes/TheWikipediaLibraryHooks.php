@@ -100,11 +100,11 @@ class TheWikipediaLibraryHooks {
 
 			// Only proceed if we haven't already notified this user
 			$twlNotified = PreferenceHelper::getGlobalPreference( $user, 'twl-notified' );
-			if ( $twlNotified === true ) {
+			if ( $twlNotified === 'yes' ) {
 				return;
 			// Set the twl-notified preference to false if we haven't notified this user
 			} else if ($twlNotified === null ) {
-				PreferenceHelper::setGlobalPreference( $user, 'twl-notified', false );
+				PreferenceHelper::setGlobalPreference( $user, 'twl-notified', 'no' );
 				$twlNotified = PreferenceHelper::getGlobalPreference( $user, 'twl-notified' );
 			}
 
@@ -114,14 +114,14 @@ class TheWikipediaLibraryHooks {
 			$minimumAge = $wgTwlRegistrationDays * 24 * 3600;
 
 			// Notify the user if they are eligible and haven't been notified yet
-			if ( $twlNotified === false && $globalUser->getGlobalEditCount() >= $wgTwlEditCount && $accountAge >= $minimumAge ) {
+			if ( $twlNotified === 'no' && $globalUser->getGlobalEditCount() >= $wgTwlEditCount && $accountAge >= $minimumAge ) {
 				EchoEvent::create( [
 					'type' => 'twl-eligible',
 					'agent' => $user,
 				] );
 
 				// Set the twl-notified preference globally, so we'll know not to notify this user again
-				PreferenceHelper::setGlobalPreference( $user, 'twl-notified', true );
+				PreferenceHelper::setGlobalPreference( $user, 'twl-notified', 'yes' );
 			}
 		} );
 	}
