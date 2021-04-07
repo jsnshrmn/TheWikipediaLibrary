@@ -30,7 +30,7 @@ class TheWikipediaLibraryHooks {
 			'category' => 'system',
 			'group' => 'positive',
 			'section' => 'message',
-			'presentation-model' => 'TheWikipediaLibrary\\TwlEligiblePresentationModel'
+			'presentation-model' => 'TwlEligiblePresentationModel'
 		];
 
 		$icons['twl-eligible'] = [
