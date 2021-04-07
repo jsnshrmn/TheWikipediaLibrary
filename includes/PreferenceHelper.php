@@ -53,7 +53,7 @@ class PreferenceHelper {
 	 * @param string $preference
 	 * @return string|null Preference value
 	 */
-	public static function getGlobalPreference( $user, $preference ) {
+	public static function getGlobalPreference( User $user, $preference ) {
 		if ( !ExtensionRegistry::getInstance()->isLoaded( 'GlobalPreferences' ) ) {
 			// Need GlobalPreferences extension.
 			wfLogWarning( __METHOD__ . ': Need GlobalPreferences extension. Not getting preference.' );

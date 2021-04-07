@@ -13,6 +13,8 @@ class TheWikipediaLibraryHooksTest extends MediaWikiIntegrationTestCase {
 	protected function setUp() : void {
 		parent::setUp();
 
+		global $wgTwlEditCount;
+
 		// Methods that need to be set on both global users
 		$methods = [
 			'getName',
@@ -31,7 +33,7 @@ class TheWikipediaLibraryHooksTest extends MediaWikiIntegrationTestCase {
 		$this->centralAuthUser1->expects( $this->never() )->method( $this->anythingBut( '__destruct', ...$methods ) );
 
 		$this->centralAuthUser1->method( 'getName' )->willReturn( $user1Name );
-		$this->centralAuthUser1->method( 'getGlobalEditCount' )->willReturn( 650 );
+		$this->centralAuthUser1->method( 'getGlobalEditCount' )->willReturn( $wgTwlEditCount + 1 );
 		$this->centralAuthUser1->method( 'getRegistration' )->willReturn( 365 );
 		$this->centralAuthUser1->method( 'isAttached' )->willReturn( true );
 
@@ -57,7 +59,7 @@ class TheWikipediaLibraryHooksTest extends MediaWikiIntegrationTestCase {
 		$this->centralAuthUser2->expects( $this->never() )->method( $this->anythingBut( '__destruct', ...$methods ) );
 
 		$this->centralAuthUser2->method( 'getName' )->willReturn( $user2Name );
-		$this->centralAuthUser2->method( 'getGlobalEditCount' )->willReturn( 50 );
+		$this->centralAuthUser2->method( 'getGlobalEditCount' )->willReturn( $wgTwlEditCount - 1 );
 		$this->centralAuthUser2->method( 'getRegistration' )->willReturn( 180 );
 		$this->centralAuthUser2->method( 'isAttached' )->willReturn( true );
 
@@ -83,10 +85,17 @@ class TheWikipediaLibraryHooksTest extends MediaWikiIntegrationTestCase {
 				->disableOriginalConstructor()
 				->setMethods( [ 'getGlobalPreferencesValues' ] )
 				->getMock();
-		$prefsFactory->method( 'getGlobalPreferencesValues' )
-			->willReturn( [
-				'twl-notified' => 'yes',
-			] );
+		if ( TheWikipediaLibraryHooks::isTwlEligible( $this->centralAuthUser1 ) ) {
+			$prefsFactory->method( 'getGlobalPreferencesValues' )
+				->willReturn( [
+					'twl-notified' => 'yes',
+				] );
+		} else {
+			$prefsFactory->method( 'getGlobalPreferencesValues' )
+				->willReturn( [
+					'twl-notified' => 'no',
+				] );
+		}
 
 		$this->setService( 'PreferencesFactory', $prefsFactory );
 
@@ -115,10 +124,17 @@ class TheWikipediaLibraryHooksTest extends MediaWikiIntegrationTestCase {
 				->disableOriginalConstructor()
 				->setMethods( [ 'getGlobalPreferencesValues' ] )
 				->getMock();
-		$prefsFactory->method( 'getGlobalPreferencesValues' )
-			->willReturn( [
-				'twl-notified' => 'no',
-			] );
+		if ( TheWikipediaLibraryHooks::isTwlEligible( $this->centralAuthUser2 ) ) {
+			$prefsFactory->method( 'getGlobalPreferencesValues' )
+				->willReturn( [
+					'twl-notified' => 'yes',
+				] );
+		} else {
+			$prefsFactory->method( 'getGlobalPreferencesValues' )
+				->willReturn( [
+					'twl-notified' => 'no',
+				] );
+		}
 
 		$this->setService( 'PreferencesFactory', $prefsFactory );
 

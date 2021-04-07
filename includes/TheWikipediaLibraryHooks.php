@@ -82,6 +82,29 @@ class TheWikipediaLibraryHooks {
 	}
 
 	/**
+	 * Determine Twl Eligibility
+	 *
+	 * @param mixed $centralAuthUser
+	 *
+	 * @note CentralAuthUser class mock in tests doesn't work with typehints,
+	 * so that typehint is not used. The variable name reflects the class.
+	 */
+	public static function isTwlEligible( $centralAuthUser ) {
+		global $wgTwlEditCount, $wgTwlRegistrationDays;
+
+		// Check eligibility
+		$accountAge = (int)wfTimestamp( TS_UNIX ) -
+			(int)wfTimestamp( TS_UNIX, $centralAuthUser->getRegistration() );
+		$minimumAge = $wgTwlRegistrationDays * 24 * 3600;
+
+		if ( $centralAuthUser->getGlobalEditCount() >= $wgTwlEditCount && $accountAge >= $minimumAge ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * Shared implementation for PageContentSaveComplete and PageSaveComplete
 	 *
 	 * @param User $user
@@ -90,8 +113,6 @@ class TheWikipediaLibraryHooks {
 		// Send a notification if the user has at least $wgTwlEditCount edits and their account
 		// is at least $wgTwlRegistrationDays days old
 		DeferredUpdates::addCallableUpdate( function () use ( $user ) {
-			global $wgTwlEditCount, $wgTwlRegistrationDays;
-
 			// Only proceed if we're dealing with an SUL account
 			$globalUser = CentralAuthUser::getInstance( $user );
 			if ( !$globalUser->isAttached() ) {
@@ -108,13 +129,8 @@ class TheWikipediaLibraryHooks {
 				$twlNotified = PreferenceHelper::getGlobalPreference( $user, 'twl-notified' );
 			}
 
-			// Check eligibility
-			$accountAge = (int)wfTimestamp( TS_UNIX ) -
-				(int)wfTimestamp( TS_UNIX, $globalUser->getRegistration() );
-			$minimumAge = $wgTwlRegistrationDays * 24 * 3600;
-
 			// Notify the user if they are eligible and haven't been notified yet
-			if ( $twlNotified === 'no' && $globalUser->getGlobalEditCount() >= $wgTwlEditCount && $accountAge >= $minimumAge ) {
+			if ( $twlNotified === 'no' && self::isTwlEligible( $globalUser ) ) {
 				EchoEvent::create( [
 					'type' => 'twl-eligible',
 					'agent' => $user,
