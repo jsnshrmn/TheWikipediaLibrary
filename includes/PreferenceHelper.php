@@ -17,16 +17,6 @@ use User;
 class PreferenceHelper {
 
 	/**
-	 * @param User $user
-	 *
-	 * @return bool
-	 */
-	public static function isBetaFeatureEnabled( User $user ) {
-		return ExtensionRegistry::getInstance()->isLoaded( 'BetaFeatures' )
-			&& BetaFeatures::isFeatureEnabled( $user, 'twl' );
-	}
-
-	/**
 	 * Set a global preference for the user.
 	 * @param User $user
 	 * @param string $preference
