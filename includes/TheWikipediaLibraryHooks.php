@@ -22,6 +22,12 @@ class TheWikipediaLibraryHooks {
 	public static function onBeforeCreateEchoEvent(
 		&$notifications, &$notificationCategories, &$icons
 	) {
+		if ( !ExtensionRegistry::getInstance()->isLoaded( 'Echo' ) ) {
+			// Need Echo extension.
+			wfLogWarning( __METHOD__ . ': Need Echo extension. Not sending notification.' );
+			return;
+		}
+
 		$notifications['twl-eligible'] = [
 			EchoAttributeManager::ATTR_LOCATORS => [
 				'EchoUserLocator::locateEventAgent'
@@ -74,6 +80,12 @@ class TheWikipediaLibraryHooks {
 		$revisionRecord,
 		$editResult
 	) {
+		if ( !ExtensionRegistry::getInstance()->isLoaded( 'CentralAuth' ) ) {
+			// Need CentralAuth extension.
+			wfLogWarning( __METHOD__ . ': Need CentralAuth extension. Not sending notification.' );
+			return;
+		}
+
 		global $wgTwlSendNotifications;
 		if ( $wgTwlSendNotifications ) {
 			$user = User::newFromIdentity( $userIdentity );
