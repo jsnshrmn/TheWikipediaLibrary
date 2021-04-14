@@ -77,10 +77,9 @@ class TheWikipediaLibraryHooksTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \TheWikipediaLibraryHooks::onPageSaveComplete()
+	 * @covers \TheWikipediaLibraryHooks::isTwlEligible()
 	 */
-	public function testOnPageSaveCompleteUserNotified() {
-		$flags = EDIT_NEW;
+	public function testIsTwlEligibleUserNotified() {
 		$prefsFactory = $this->getMockBuilder( GlobalPreferencesFactory::class )
 				->disableOriginalConstructor()
 				->setMethods( [ 'getGlobalPreferencesValues' ] )
@@ -99,27 +98,15 @@ class TheWikipediaLibraryHooksTest extends MediaWikiIntegrationTestCase {
 
 		$this->setService( 'PreferencesFactory', $prefsFactory );
 
-		$summary = 'Test summary';
-
-		TheWikipediaLibraryHooks::onPageSaveComplete(
-			$this->mockEntityPage1,
-			$this->user1,
-			$summary,
-			$flags,
-			$this->createMock( RevisionRecord::class ),
-			$this->createMock( EditResult::class )
-		);
-
 		$twlNotified = PreferenceHelper::getGlobalPreference( $this->user1, 'twl-notified' );
 
 		$this->assertSame( 'yes', $twlNotified );
 	}
 
 	/**
-	 * @covers \TheWikipediaLibraryHooks::onPageSaveComplete()
+	 * @covers \TheWikipediaLibraryHooks::isTwlEligible()
 	 */
-	public function testOnPageSaveCompleteUserNotNotified() {
-		$flags = EDIT_NEW;
+	public function testIsTwlEligibleUserNotNotified() {
 		$prefsFactory = $this->getMockBuilder( GlobalPreferencesFactory::class )
 				->disableOriginalConstructor()
 				->setMethods( [ 'getGlobalPreferencesValues' ] )
@@ -137,17 +124,6 @@ class TheWikipediaLibraryHooksTest extends MediaWikiIntegrationTestCase {
 		}
 
 		$this->setService( 'PreferencesFactory', $prefsFactory );
-
-		$summary = 'Test summary 2';
-
-		TheWikipediaLibraryHooks::onPageSaveComplete(
-			$this->mockEntityPage2,
-			$this->user2,
-			$summary,
-			$flags,
-			$this->createMock( RevisionRecord::class ),
-			$this->createMock( EditResult::class )
-		);
 
 		$twlNotified = PreferenceHelper::getGlobalPreference( $this->user2, 'twl-notified' );
 
